@@ -1,0 +1,2 @@
+# jquery.streak
+jQuery.Streak
