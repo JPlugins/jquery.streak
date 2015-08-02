@@ -1,33 +1,50 @@
 ( function($) {
 
+        $.fn.difference = function(a, b) {
+            return Math.abs(a - b);
+        };
+
         $.fn.streak = function(options) {
 
-            var settings = $.extend({
-                text : 'Hello, World!',
-                color : null,
-                fontStyle : null
-            }, options);
-
-            var newCanvas = $('<canvas id="myCanvas" height="2000px" width="2000px"  />', {
-
-            });
+            var winHeight = $(window).height();
+            var winWidth = $(window).width();
+            var newCanvas = $('<canvas id="myCanvas" height="' + winHeight + '" width="' + winWidth + '"  />', {});
 
             $("body").append(newCanvas);
+
+            var target = $('#' + options.target.toString());
+            var streakColor = 'green';
+            if (options.color) {
+                streakColor = options.color.toString();
+            }
 
             $('#myCanvas').css("zIndex", 1000);
             $('#myCanvas').css("position", "absolute");
             $('#myCanvas').css("left", 0);
             $('#myCanvas').css("top", 0);
 
+            var isTargetAboveDestination = (target.offset().top < $(this).offset().top) ? true : false;
+            var isTargetInLeftSide = (target.offset().left < $(this).offset().left) ? true : false;
+
+            var topDiff = $.fn.difference(target.offset().top, $(this).offset().top);
+            var leftDiff = $.fn.difference(target.offset().left, $(this).offset().left);
+
+            var isBaseFill = (topDiff >= leftDiff) ? true : false;
+
+            console.log('topDiff ' + topDiff);
+            console.log('leftDiff ' + leftDiff);
+
             return this.each(function() {
 
-                var dom_1_x = $(this).offset().left;
-                var dom_1_y = $(this).offset().top;
-                var dom_1_height = $(this).height();
-                var dom_2_x = $(options[0]).offset().left;
-                var dom_2_y = $(options[0]).offset().top;
-                var dom_2_height = $(options[0]).height();
-                var dom_2_width = $(options[0]).width();
+                var dest_left = $(this).offset().left;
+                var dest_top = $(this).offset().top;
+                var dest_height = $(this).outerHeight();
+                var dest_width = $(this).outerWidth();
+
+                var target_left = target.offset().left;
+                var target_top = target.offset().top;
+                var target_height = target.outerHeight();
+                var target_width = target.outerWidth();
 
                 // We'll get back to this in a moment
 
@@ -35,20 +52,27 @@
                 var ctx = c.getContext("2d");
                 ctx.beginPath();
 
-                var x1, x2, y1, y2;
-                x1 = dom_1_x;
-                x2 = x1 + $(this).outerWidth();
-                y1 = dom_1_y + dom_1_height + 5;
-                y2 = dom_2_y;
+                if (isTargetAboveDestination) {
+                    if (isBaseFill) {
+                        ctx.moveTo(dest_left, dest_top);
+                        ctx.lineTo(dest_left + dest_width, dest_top);
+                        ctx.lineTo(target_left, target_top + target_height);
+                        ctx.lineTo(dest_left, dest_top);
+                    } else {
+                        // wall side
+                        ctx.moveTo(dest_left + dest_width, dest_top);
+                        ctx.lineTo(dest_left + dest_width, dest_top + dest_height);
+                        ctx.lineTo(target_left, target_top + target_height);
+                        ctx.lineTo(dest_left + dest_width, dest_top);
+                    }
+                } else {
+                    ctx.moveTo(dest_left, dest_top + dest_height);
+                    ctx.lineTo(dest_left + dest_width, dest_top + dest_height);
+                    ctx.lineTo(target_left, target_top);
+                    ctx.lineTo(dest_left, dest_top + dest_height);
+                }
 
-                ctx.moveTo(x1, y1);
-                ctx.lineTo(x2, y1);
-                ctx.lineTo(dom_2_x, y2);
-                ctx.lineTo(x1, y1);
-
-                console.log(x1 + " " + x2 + " " + y1 + " " + y2);
-
-                ctx.fillStyle = 'green';
+                ctx.fillStyle = streakColor;
                 ctx.fill();
                 ctx.stroke();
 
