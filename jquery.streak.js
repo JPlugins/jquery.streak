@@ -24,6 +24,8 @@
             $('#myCanvas').css("top", 0);
 
             var isTargetAboveDestination = (target.offset().top < $(this).offset().top) ? true : false;
+
+            /*TODO: need to handle isTargetInLeftSide*/
             var isTargetInLeftSide = (target.offset().left < $(this).offset().left) ? true : false;
 
             var topDiff = $.fn.difference(target.offset().top, $(this).offset().top);
@@ -53,6 +55,7 @@
                 ctx.beginPath();
 
                 if (isTargetAboveDestination) {
+                    /*TODO: need to handle isTargetInLeftSide*/
                     if (isBaseFill) {
                         ctx.moveTo(dest_left, dest_top);
                         ctx.lineTo(dest_left + dest_width, dest_top);
@@ -66,6 +69,9 @@
                         ctx.lineTo(dest_left + dest_width, dest_top);
                     }
                 } else {
+                    /*TODO: need to handle isTargetInLeftSide*/
+                    /*TO DO need to handle isBaseFill*/
+
                     ctx.moveTo(dest_left, dest_top + dest_height);
                     ctx.lineTo(dest_left + dest_width, dest_top + dest_height);
                     ctx.lineTo(target_left, target_top);
