@@ -8,7 +8,7 @@
                 fontStyle : null
             }, options);
 
-            var newCanvas = $('<canvas id="myCanvas" height="2000" width="2000"  />', {
+            var newCanvas = $('<canvas id="myCanvas" height="2000px" width="2000px"  />', {
 
             });
 
